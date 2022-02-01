@@ -29,6 +29,7 @@ class Blockchin {
             //let's grab the timestamp, the last hash, the hash and the data from the block 
             //using JavaScript distruction syntax
             const { timestamp, lastHash, hash, data } = chain[i];
+
             const actualLastHash = chain[i - 1].hash;
 
             if (lastHash !== actualLastHash) return false;
@@ -40,6 +41,8 @@ class Blockchin {
 
         return true;
     }
+
+    
 
 }
 

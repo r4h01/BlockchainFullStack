@@ -3,11 +3,14 @@ const Block = require('../block');
 
 describe('Blockchain', () => {
 
-    let blockchain = new Blockchain();
+    let blockchain, newChain, originalChain;
 
     //we want every test to have a fresh instance of the block chain to test with.
     beforeEach(() => {
         blockchain = new Blockchain();
+        newChain = new Blockchain();
+
+        originalChain = blockchain.chain;
     })
 
     //first let's test the blockchain instance
@@ -31,7 +34,7 @@ describe('Blockchain', () => {
     describe('isValidChain()', () => {
 
         //we need to set up a few test for validating the chain
-        
+
         describe('when the chain does not start with the genesis block', () => {
             it('returns false', () => {
                 blockchain.chain[0] = { data: 'fake-genesis' };
@@ -75,6 +78,47 @@ describe('Blockchain', () => {
         });
 
 
+    });
+
+    describe('replaceChain()', () => {
+        describe('when the new chain is not longer', () => {
+            it('does not replace the chain', () => {
+
+                newChain.chain[0] = { new: 'chain' }
+
+                blockchain.replaceChain(newChain.chain);
+
+                expect(blockchain.chain).toEqual(originalChain.chain)
+            });
+        });
+        describe('when the new chain is longer', () => {
+            beforeEach(() => {
+                newChain.addBlock({ data: 'Bears' });
+                newChain.addBlock({ data: 'Beets' });
+                newChain.addBlock({ data: 'Battlestar Galactica' });
+            });
+
+            describe('and the chain is invalid', () => {
+                it('does not replace the chain', () => {
+                    
+                    newChain.chain[2].hash = 'some-fake-hash';
+
+                    blockchain.replaceChain(newChain.chain);
+
+                    expect(blockchain.chain).toEqual(originalChain.chain)
+
+                });
+            });
+            describe('and the chain is valid', () => {
+                it('replace the chain', () => {
+
+                    blockchain.replaceChain(newChain.chain);
+
+                    expect(blockchain.chain).toEqual(newChain.chain)
+
+                });
+            });
+        });
     });
 
 });
