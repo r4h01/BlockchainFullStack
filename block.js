@@ -1,9 +1,10 @@
 //I'm define the block class, I need a genesis block for getting start the blockchain
 const { GENESIS_DATA } = require('./config');
+const cryptoHash = require('./crypto-hash');
 
 class Block {
 
-    constructor({timestamp, lastHash, hash, data}) {
+    constructor({ timestamp, lastHash, hash, data }) {
 
         this.timestamp = timestamp;
         this.lastHash = lastHash;
@@ -13,15 +14,20 @@ class Block {
 
     //Method for creating the genesis block
     static genesis() {
-        return new Block( GENESIS_DATA);
+        return new Block(GENESIS_DATA);
     }
 
     //Method for mine a block
-    static mineBlock({lastBlock, data}) {
+    static mineBlock({ lastBlock, data }) {
+
+        const timestamp = Date.now();
+        const lastHash = lastBlock.hash;
+
         return new this({
-            timestamp : Date.now(),
-            lastHash : lastBlock.hash,
-            data
+            timestamp,
+            lastHash,
+            data,
+            hash: cryptoHash(timestamp, lastHash, data)
         });
     }
 
